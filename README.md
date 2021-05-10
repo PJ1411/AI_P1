@@ -1,2 +1,2 @@
 # AI_P1
-First Practical of artificial intelligence (SoSe21)
+First practical of artificial intelligence (SoSe21)
