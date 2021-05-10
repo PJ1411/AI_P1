@@ -202,7 +202,6 @@ def Initialize():
 def AStar():
     tupel = opn.get()
     s = tupel[1]
-    last = s
     if(s.x==grid.end.x and s.y==grid.end.y ):
         print("Ziel erreicht")
         grid.solved = True
