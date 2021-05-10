@@ -38,6 +38,25 @@ def getChildNodes_UCS(problem, parent, visited,frontier):
                elif(check_FrontierPrio(child,frontier)==True):
                   check_HigherCost(child,frontier)
 
+
+def getChildNodes_DFS(problem, parent, visited,frontier):
+   for i in range(0,len(g.nodes)):
+      if(g.nodes[i].name == parent.name):
+         if(len(g.nodes[i].edges)>0):
+            for e in range(0,len(g.nodes[i].edges)):
+               child = Node(g.nodes[i].edges[e].end.name)
+               child.parent = parent
+               child.value = g.nodes[i].edges[e].value+parent.value
+               if(check_visited(child,visited)==False and check_FrontierLIFO(child,frontier)==False):
+                  if(child.name == problem.end):
+                     problem.solved = True
+                     problem.best_node = child
+                     return
+                  frontier.put(child)
+
+                  
+
+
                
    
 def check_visited(node,visited):
@@ -68,6 +87,20 @@ def check_FrontierPrio(node,frontier):
       knoten = frontier.get()
       temp.put(knoten)
       if(node.name == knoten[1].name):
+         seen = True
+   for v in range(0,size):
+      knoten = temp.get()
+      frontier.put(knoten)
+   return seen
+
+def check_FrontierLIFO(node,frontier):
+   size = frontier.qsize()
+   temp = queue.LifoQueue()
+   seen = False
+   for v in range(0,size):
+      knoten = frontier.get()
+      temp.put(knoten)
+      if(node.name == knoten.name):
          seen = True
    for v in range(0,size):
       knoten = temp.get()
@@ -182,7 +215,7 @@ def bfs(problem):
    frontier.put(node)
    visited=[]
 
-   while True:
+   while problem.solved==False:
       if frontier.empty():
          return "Fehler"
       knoten = frontier.get()
@@ -191,7 +224,7 @@ def bfs(problem):
       if(problem.solved == True):
          path = getPath(problem.best_node)
          kosten = problem.best_node.value
-         print("Gelöst!")
+         print("Gelöst mit BFS!")
          print("Kosten:")
          print(kosten)
          print("Pfad:")
@@ -201,7 +234,6 @@ def bfs(problem):
          pathString = problem.start + pathString
             
          print(pathString)
-         return
          
 
 def ucs(problem):
@@ -211,15 +243,14 @@ def ucs(problem):
    frontier.put((0,node))
    visited=[]
 
-   while True:
+   while problem.solved==False:
       if(frontier.empty()):
          return "FEHLER"
       knoten = frontier.get()[1]
-      print(knoten.name)
       if(problem.end == knoten.name):
          path = getPath(knoten)
          kosten = knoten.value
-         print("Gelöst!")
+         print("Gelöst mit UCS!")
          print("Kosten:")
          print(kosten)
          print("Pfad:")
@@ -228,7 +259,7 @@ def ucs(problem):
             pathString = "->" + path[p].name + pathString
          pathString = problem.start + pathString
          print(pathString)
-         return
+         problem.solved=True
       visited.insert(len(visited),knoten)
       getChildNodes_UCS(problem,knoten,visited,frontier)
       
@@ -240,16 +271,16 @@ def dfs(problem):
    frontier.put(node)
    visited = []
 
-   while True:
+   while problem.solved==False:
       if frontier.empty():
          return "Fehler"
       knoten = frontier.get()
       visited.insert(len(visited),knoten)
-      getChildNodes_BFS(problem,knoten,visited,frontier)
+      getChildNodes_DFS(problem,knoten,visited,frontier)
       if(problem.solved == True):
          path = getPath(problem.best_node)
          kosten = problem.best_node.value
-         print("Gelöst!")
+         print("Gelöst mit DFS!")
          print("Kosten:")
          print(kosten)
          print("Pfad:")
@@ -259,16 +290,20 @@ def dfs(problem):
          pathString = problem.start + pathString
             
          print(pathString)
-         return
+         problem.solved = True
    
    
 
 
-p = problem('Bu','Ti')
-
-#bfs(p)
-#ucs(p)
-dfs(p)
+p1 = problem('Bu','Ti')
+p2 = problem('Bu','Ti')
+p3 = problem('Bu','Ti')
+bfs(p1)
+print("----------")
+ucs(p2)
+print("----------")
+dfs(p3)
+print("----------")
       
       
 
